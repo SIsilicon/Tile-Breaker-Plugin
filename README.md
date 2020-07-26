@@ -10,7 +10,7 @@ Ugh! 😫 Look at all of that distracting tiling pattern in the terrain. Unless 
 
 _Much_ better. 😄 Here's a side by side comparison of this feature. Amazing, isn't it?
 
-![](doc_images/plugin comparison.png)
+![](doc_images/plugin_comparison.png)
 
 ## Installation
 

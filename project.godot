@@ -1,0 +1,41 @@
+; Engine configuration file.
+; It's best edited using the editor UI and not directly,
+; since the parameters that go here are not all obvious.
+;
+; Format:
+;   [section] ; section goes between []
+;   param=value ; assign values to parameters
+
+config_version=4
+
+_global_script_classes=[ {
+"base": "Material",
+"class": "TileBreaker",
+"language": "GDScript",
+"path": "res://addons/silicon.vfx.tilebreaker/tile_breaker.gd"
+}, {
+"base": "VisualShaderNodeCustom",
+"class": "VisualShaderNodeTextureNoTile",
+"language": "GDScript",
+"path": "res://addons/silicon.vfx.tilebreaker/visual_shader_tile_breaker.gd"
+} ]
+_global_script_class_icons={
+"TileBreaker": "",
+"VisualShaderNodeTextureNoTile": ""
+}
+
+[application]
+
+config/name="Tile Breaker Addon"
+run/main_scene="res://Test.tscn"
+config/icon="res://icon.png"
+
+[editor_plugins]
+
+enabled=PoolStringArray( "silicon.vfx.tilebreaker" )
+
+[rendering]
+
+quality/filters/msaa=2
+environment/default_environment="res://default_env.tres"
+quality/tile_breaker/quality=1

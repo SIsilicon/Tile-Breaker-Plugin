@@ -1,0 +1,9 @@
+[gd_resource type="Environment" load_steps=2 format=2]
+
+[sub_resource type="ProceduralSky" id=1]
+sun_latitude = 51.58
+sun_longitude = -174.33
+
+[resource]
+background_mode = 2
+background_sky = SubResource( 1 )

@@ -61,7 +61,7 @@ size = Vector3( 0.5, 0.5, 0.5 )
 albedo_texture = ExtResource( 7 )
 roughness_texture = ExtResource( 9 )
 normal_enabled = true
-normal_scale = 1.0
+normal_scale = 2.0
 normal_texture = ExtResource( 8 )
 uv1_scale = Vector3( 10, 10, 1 )
 
@@ -69,9 +69,10 @@ uv1_scale = Vector3( 10, 10, 1 )
 albedo_texture = ExtResource( 7 )
 roughness_texture = ExtResource( 9 )
 normal_enabled = true
-normal_scale = 1.0
+normal_scale = 2.0
 normal_texture = ExtResource( 8 )
-uv1_scale = Vector3( 10, 10, 1 )
+uv1_scale = Vector3( 8, 8, 8 )
+uv1_triplanar = true
 script = ExtResource( 1 )
 __meta__ = {
 "_tile_breaker_cleanup": Object(Reference,"script":Resource( "res://addons/silicon.vfx.tilebreaker/tile_breaker_cleanup.gd" ),"adjusted_shader":[  ],"material":SubResource( 5 ))
@@ -79,7 +80,7 @@ __meta__ = {
 }
 uv1_break_tiling = true
 uv1_random_rotation = 180.0
-uv1_blending = 0.185
+uv1_blending = 0.2
 uv2_break_tiling = false
 uv2_random_rotation = 180.0
 uv2_blending = 0.4
@@ -102,6 +103,6 @@ mesh = SubResource( 3 )
 material/0 = SubResource( 5 )
 
 [node name="DirectionalLight" type="DirectionalLight" parent="."]
-transform = Transform( 0.919575, 0.294757, -0.259808, 0, 0.661233, 0.75018, 0.392915, -0.689847, 0.608053, 0, 5.52532, 0 )
+transform = Transform( 0.995679, 0.083573, -0.0404916, -0.0298721, 0.701081, 0.712456, 0.08793, -0.708168, 0.700548, 5.4109, 3.13333, 3.52562 )
 shadow_bias = 0.03
 directional_shadow_depth_range = 1

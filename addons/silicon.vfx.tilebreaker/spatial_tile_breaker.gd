@@ -81,6 +81,7 @@ func transform_material() -> String:
 	var is_triplanar := false
 	while texture_func:
 		var tex_uv_layer := 1
+		var is_vector_map: bool = texture_func.texture in ["texture_normal", "texture_flow_map", "texture_detail_normal"]
 		if not texture_func.texture in TEXTURE_PARAMS:
 			tex_uv_layer = 0
 		elif texture_func.texture in ["texture_detail_mask", "texture_detail_albedo", "texture_detail_normal"] and detail_uv_layer == DETAIL_UV_2:
@@ -89,9 +90,10 @@ func transform_material() -> String:
 			tex_uv_layer = 2
 		elif texture_func.texture == "texture_ambient_occlusion" and ao_on_uv2:
 			tex_uv_layer = 2
-		
+
 		if (tex_uv_layer == 1 and uv1_break_tiling) or (tex_uv_layer == 2 and uv2_break_tiling):
-			code = code.insert(TileBreaker.find_closing_bracket(code, texture_func.bracket), ",uv1_random_rotation,uv1_blending" if tex_uv_layer == 1 else ",uv2_random_rotation,uv2_blending")
+			var func_params := (",uv1_random_rotation,uv1_blending," if tex_uv_layer == 1 else ",uv2_random_rotation,uv2_blending,") + str(is_vector_map).to_lower()
+			code = code.insert(TileBreaker.find_closing_bracket(code, texture_func.bracket), func_params)
 			code.erase(texture_func.index, len("texture" if not is_triplanar else "triplanar_texture"))
 			code = code.insert(texture_func.index, "textureNoTile" if not is_triplanar else "triplanarTextureNoTile")
 		

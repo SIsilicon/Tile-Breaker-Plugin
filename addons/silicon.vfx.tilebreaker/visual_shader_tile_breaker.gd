@@ -20,7 +20,7 @@ func _get_return_icon_type():
 
 
 func _get_input_port_count():
-	return 4
+	return 5
 
 
 func _get_input_port_name(port):
@@ -32,6 +32,8 @@ func _get_input_port_name(port):
 		2:
 			return "blending"
 		3:
+			return "is_vector_map"
+		4:
 			return "sampler2D"
 
 
@@ -44,6 +46,8 @@ func _get_input_port_type(port):
 		2:
 			return VisualShaderNode.PORT_TYPE_SCALAR
 		3:
+			return VisualShaderNode.PORT_TYPE_BOOLEAN
+		4:
 			return VisualShaderNode.PORT_TYPE_SAMPLER
 
 
@@ -76,14 +80,16 @@ func _get_code(input_vars, output_vars, mode, type):
 	input_vars[0] = input_vars[0] if input_vars[0] else "UV"
 	input_vars[1] = input_vars[1] if input_vars[1] else "0.0"
 	input_vars[2] = input_vars[2] if input_vars[2] else "0.2"
+	input_vars[3] = input_vars[3] if input_vars[3] else "false"
 	
 	return \
-		("	vec4 "+ temp_var +" = textureNoTile(%s, %s.xy, %s, %s);\n" +\
+		("	vec4 "+ temp_var +" = textureNoTile(%s, %s.xy, %s, %s, %s);\n" +\
 		"	%s = "+ temp_var +".rgb;\n" +\
 		"	%s = "+ temp_var +".a;\n") %\
-		[input_vars[3], input_vars[0], input_vars[1], input_vars[2], output_vars[0], output_vars[1]]
+		[input_vars[3], input_vars[0], input_vars[1], input_vars[2], input_vars[3], output_vars[0], output_vars[1]]
 
 
 func _init() -> void:
 	set_input_port_default_value(1, 0.0)
 	set_input_port_default_value(2, 0.2)
+	set_input_port_default_value(3, false)

@@ -52,3 +52,5 @@ This plugin is best suited for projects running GLES 3, but it can run on GLES 2
 ## Special Thanks
 
 The textures used in the demo scene were provided by https://www.cgbookcase.com/. 🙂
+
+And the shaders that this plugin uses are based off the ones from https://www.iquilezles.org/www/articles/texturerepetition/texturerepetition.htm. You can find some excellent shaders from this place.

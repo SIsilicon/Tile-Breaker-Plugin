@@ -20,11 +20,11 @@ const SAMPLER_CODE = {
 		}
 	""",
 	"triplanar": """
-		vec4 triplanarTextureNoTile(sampler2D p_sampler, vec3 p_weights, vec3 p_triplanar_pos, float p_rotation, float p_blending) {
+		vec4 triplanarTextureNoTile(sampler2D p_sampler, vec3 p_weights, vec3 p_triplanar_pos, float p_rotation, float p_blending, bool p_vector_map) {
 			vec4 samp = vec4(0.0);
-			samp += textureNoTile(p_sampler, p_triplanar_pos.xy, p_rotation, p_blending) * p_weights.z;
-			samp += textureNoTile(p_sampler, p_triplanar_pos.xz, p_rotation, p_blending) * p_weights.y;
-			samp += textureNoTile(p_sampler, p_triplanar_pos.zy * vec2(-1.0,1.0), p_rotation, p_blending) * p_weights.x;
+			samp += textureNoTile(p_sampler, p_triplanar_pos.xy, p_rotation, p_blending, p_vector_map) * p_weights.z;
+			samp += textureNoTile(p_sampler, p_triplanar_pos.xz, p_rotation, p_blending, p_vector_map) * p_weights.y;
+			samp += textureNoTile(p_sampler, p_triplanar_pos.zy * vec2(-1.0,1.0), p_rotation, p_blending, p_vector_map) * p_weights.x;
 			return samp;
 		}
 	""",
@@ -32,7 +32,7 @@ const SAMPLER_CODE = {
 		"low": """
 			uniform sampler2D variation;
 
-			vec4 textureNoTile(sampler2D p_sampler, in vec2 p_uv, in float p_rotation, in float p_blending) {
+			vec4 textureNoTile(sampler2D p_sampler, in vec2 p_uv, in float p_rotation, in float p_blending, in bool p_vector_map) {
 				// sample variation pattern    
 				float k = texture(variation, 0.005*p_uv).x; // cheap (cache friendly) lookup    
 
@@ -51,13 +51,17 @@ const SAMPLER_CODE = {
 				// sample the two closest virtual patterns    
 				vec4 cola = textureGrad(p_sampler, noTileRotate(p_uv + offa.xy, p_rotation * offa.z), dx, dy);
 				vec4 colb = textureGrad(p_sampler, noTileRotate(p_uv + offb.xy, p_rotation * offb.z), dx, dy);
+				if(p_vector_map) {
+					cola.rg = 0.5 * noTileRotate(2.0 * cola.rg - 1.0, -p_rotation * offa.z) + 0.5;
+					colb.rg = 0.5 * noTileRotate(2.0 * colb.rg - 1.0, -p_rotation * offb.z) + 0.5;
+				}
 
 				// interpolate between the two virtual patterns    
 				return mix(cola, colb, smoothstep(0.5-p_blending*0.5, 0.5+p_blending*0.5, f-0.1*dot(cola-colb, vec4(1.0))));
 			}
 		""",
 		"medium": """
-			vec4 textureNoTile(sampler2D p_sampler, in vec2 p_uv, in float p_rotation, in float p_blending) {
+			vec4 textureNoTile(sampler2D p_sampler, in vec2 p_uv, in float p_rotation, in float p_blending, in bool p_vector_map) {
 				vec2 iuv = floor(p_uv);
 				vec2 fuv = fract(p_uv);
 
@@ -80,14 +84,23 @@ const SAMPLER_CODE = {
 				// fetch and p_blending
 				vec2 b = smoothstep(0.5-p_blending*0.5, 0.5+p_blending*0.5, fuv);
 
-				return mix( mix(textureGrad(p_sampler, uva, ddxa, ddya), 
-								textureGrad(p_sampler, uvb, ddxb, ddyb), b.x),
-							mix(textureGrad(p_sampler, uvc, ddxc, ddyc),
-								textureGrad(p_sampler, uvd, ddxd, ddyd), b.x), b.y);
+				vec4 cola = textureGrad(p_sampler, uva, ddxa, ddya);
+				vec4 colb = textureGrad(p_sampler, uvb, ddxb, ddyb);
+				vec4 colc = textureGrad(p_sampler, uvc, ddxc, ddyc);
+				vec4 cold = textureGrad(p_sampler, uvd, ddxd, ddyd);
+				if(p_vector_map) {
+					cola.rg = 0.5 * noTileRotate(2.0 * cola.rg - 1.0, -rot.x) + 0.5;
+					colb.rg = 0.5 * noTileRotate(2.0 * colb.rg - 1.0, -rot.y) + 0.5;
+					colc.rg = 0.5 * noTileRotate(2.0 * colc.rg - 1.0, -rot.z) + 0.5;
+					cold.rg = 0.5 * noTileRotate(2.0 * cold.rg - 1.0, -rot.w) + 0.5;
+				}
+
+				return mix( mix(cola, colb, b.x),
+							mix(colc, cold, b.x), b.y);
 			}
 		""",
 		"high": """
-			vec4 textureNoTile(sampler2D p_sampler, in vec2 p_uv, in float p_rotation, in float blending) {
+			vec4 textureNoTile(sampler2D p_sampler, in vec2 p_uv, in float p_rotation, in float p_blending, in bool p_vector_map) {
 				vec2 p = floor(p_uv);
 				vec2 f = fract(p_uv);
 
@@ -105,10 +118,14 @@ const SAMPLER_CODE = {
 					vec2 vp = o.xy + f;
 					vec2 r = g - f + o.xy;
 					float d = dot(r,r);
-					float w = exp(-mix(80.0, 5.0, pow(blending, 0.5)) * d);
+					float w = exp(-mix(80.0, 5.0, pow(p_blending, 0.5)) * d);
 					float rot = p_rotation * (2.0 * o.y - 1.0);
 					vec4 c = textureGrad(p_sampler, noTileRotate(p_uv + o.zw, rot),
 							noTileRotate(ddx, rot), noTileRotate(ddy, rot));
+					if(p_vector_map) {
+						c.rg = 0.5 * noTileRotate(2.0 * c.rg - 1.0, -rot) + 0.5;
+					}
+
 					va += w*c;
 					w1 += w;
 					w2 += w*w;
@@ -121,7 +138,7 @@ const SAMPLER_CODE = {
 		"low": """
 			uniform sampler2D variation;
 
-			vec4 textureNoTile(sampler2D p_sampler, in vec2 p_uv, in float p_rotation, in float p_blending) {
+			vec4 textureNoTile(sampler2D p_sampler, in vec2 p_uv, in float p_rotation, in float p_blending, in bool p_vector_map) {
 				// sample variation pattern    
 				float k = texture(variation, 0.005*p_uv).x; // cheap (cache friendly) lookup    
 
@@ -137,6 +154,10 @@ const SAMPLER_CODE = {
 				// sample the two closest virtual patterns    
 				vec4 cola = texture(p_sampler, noTileRotate(p_uv + offa.xy, p_rotation * offa.z));
 				vec4 colb = texture(p_sampler, noTileRotate(p_uv + offb.xy, p_rotation * offb.z));
+				if(p_vector_map) {
+					cola.rg = 0.5 * noTileRotate(2.0 * cola.rg - 1.0, -p_rotation * offa.z) + 0.5;
+					colb.rg = 0.5 * noTileRotate(2.0 * colb.rg - 1.0, -p_rotation * offb.z) + 0.5;
+				}
 
 				// interpolate between the two virtual patterns    
 				return mix(cola, colb, smoothstep(0.5-p_blending*0.5, 0.5+p_blending*0.5, f-0.1*dot(cola-colb, vec4(1.0))));
@@ -163,14 +184,23 @@ const SAMPLER_CODE = {
 				// fetch and p_blending
 				vec2 b = smoothstep(0.5-p_blending*0.5, 0.5+p_blending*0.5, fuv);
 
-				return mix( mix(texture(p_sampler, uva), 
-								texture(p_sampler, uvb), b.x),
-							mix(texture(p_sampler, uvc),
-								texture(p_sampler, uvd), b.x), b.y);
+				vec4 cola = texture(p_sampler, uva);
+				vec4 colb = texture(p_sampler, uvb);
+				vec4 colc = texture(p_sampler, uvc);
+				vec4 cold = texture(p_sampler, uvd);
+				if(p_vector_map) {
+					cola.rg = 0.5 * noTileRotate(2.0 * cola.rg - 1.0, -rot.x) + 0.5;
+					colb.rg = 0.5 * noTileRotate(2.0 * colb.rg - 1.0, -rot.y) + 0.5;
+					colc.rg = 0.5 * noTileRotate(2.0 * colc.rg - 1.0, -rot.z) + 0.5;
+					cold.rg = 0.5 * noTileRotate(2.0 * cold.rg - 1.0, -rot.w) + 0.5;
+				}
+
+				return mix( mix(cola, colb, b.x),
+							mix(colc, cold, b.x), b.y);
 			}
 		""",
 		"high": """
-			vec4 textureNoTile(sampler2D p_sampler, in vec2 p_uv, in float p_rotation, in float blending) {
+			vec4 textureNoTile(sampler2D p_sampler, in vec2 p_uv, in float p_rotation, in float p_blending) {
 				vec2 p = floor(p_uv);
 				vec2 f = fract(p_uv);
 
@@ -184,9 +214,13 @@ const SAMPLER_CODE = {
 					vec2 vp = o.xy + f;
 					vec2 r = g - f + o.xy;
 					float d = dot(r,r);
-					float w = exp(-mix(80.0, 5.0, pow(blending, 0.5)) * d);
+					float w = exp(-mix(80.0, 5.0, pow(p_blending, 0.5)) * d);
 					float rot = p_rotation * (2.0 * o.y - 1.0);
 					vec4 c = texture(p_sampler, noTileRotate(p_uv + o.zw, rot));
+					if(p_vector_map) {
+						c.rg = 0.5 * noTileRotate(2.0 * c.rg - 1.0, -rot) + 0.5;
+					}
+
 					va += w*c;
 					w1 += w;
 					w2 += w*w;

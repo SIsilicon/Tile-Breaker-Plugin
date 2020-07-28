@@ -63,7 +63,7 @@ roughness_texture = ExtResource( 9 )
 normal_enabled = true
 normal_scale = 2.0
 normal_texture = ExtResource( 8 )
-uv1_scale = Vector3( 10, 10, 1 )
+uv1_scale = Vector3( 10, 10, 10 )
 
 [sub_resource type="SpatialMaterial" id=5]
 albedo_texture = ExtResource( 7 )
@@ -71,8 +71,7 @@ roughness_texture = ExtResource( 9 )
 normal_enabled = true
 normal_scale = 2.0
 normal_texture = ExtResource( 8 )
-uv1_scale = Vector3( 8, 8, 8 )
-uv1_triplanar = true
+uv1_scale = Vector3( 10, 10, 10 )
 script = ExtResource( 1 )
 __meta__ = {
 "_tile_breaker_cleanup": Object(Reference,"script":Resource( "res://addons/silicon.vfx.tilebreaker/tile_breaker_cleanup.gd" ),"adjusted_shader":[  ],"material":SubResource( 5 ))
@@ -80,7 +79,7 @@ __meta__ = {
 }
 uv1_break_tiling = true
 uv1_random_rotation = 180.0
-uv1_blending = 0.2
+uv1_blending = 0.176
 uv2_break_tiling = false
 uv2_random_rotation = 180.0
 uv2_blending = 0.4

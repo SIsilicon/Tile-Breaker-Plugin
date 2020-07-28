@@ -43,7 +43,7 @@ The parameters act the same way they do in `SpatialMaterials`. One thing to note
 
 ### Tile Breaker Quality
 
-I've been talking about plugin quality for a while now. You will find that in the `ProjectSettings` under `Rendering -> Quality`. A low quality uses only 2 texture samples, medium uses 4, and high uses 8. As expected, each one looks better, but also is more performance heavy. If you have any `VisualShaders` that use the tile breaker, then you'll have to restart the project when you have set your desired quality.
+I've been talking about plugin quality for a while now. You will find that in the `ProjectSettings` under `Rendering -> Quality`. A low quality uses only _2_ texture samples, medium uses _4_, and high uses _9_. As expected, each one looks better, but is also more performance heavy. If you have any `VisualShaders` that use the tile breaker, then you'll have to restart the project when you have set your desired quality.
 
 ### GLES 2 and 3
 

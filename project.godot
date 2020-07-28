@@ -38,4 +38,4 @@ enabled=PoolStringArray( "silicon.vfx.tilebreaker" )
 
 quality/filters/msaa=2
 environment/default_environment="res://default_env.tres"
-quality/tile_breaker/quality=2
+quality/tile_breaker/quality=1

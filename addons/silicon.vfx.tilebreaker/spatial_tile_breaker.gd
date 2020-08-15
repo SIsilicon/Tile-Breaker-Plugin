@@ -142,7 +142,7 @@ func _init() -> void:
 	dirty_shader = true
 	
 	yield(VisualServer, "frame_post_draw")
-	preload("tile_breaker_cleanup.gd").new(self)
+	preload("tile_breaker_cleanup.gd").new().clean(self)
 
 func _update() -> void:
 	if tile_breaker_quality != ProjectSettings.get_setting("rendering/quality/tile_breaker/quality"):

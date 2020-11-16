@@ -86,7 +86,7 @@ func _get_code(input_vars, output_vars, mode, type):
 		("	vec4 "+ temp_var +" = textureNoTile(%s, %s.xy, %s, %s, %s);\n" +\
 		"	%s = "+ temp_var +".rgb;\n" +\
 		"	%s = "+ temp_var +".a;\n") %\
-		[input_vars[3], input_vars[0], input_vars[1], input_vars[2], input_vars[3], output_vars[0], output_vars[1]]
+		[input_vars[4], input_vars[0], input_vars[1], input_vars[2], input_vars[3], output_vars[0], output_vars[1]]
 
 
 func _init() -> void:

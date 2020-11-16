@@ -5,7 +5,7 @@ extends Reference
 var adjusted_shader := [] # RID inside
 var material: Material
 
-func _init(material: Material) -> void:
+func clean(material: Material) -> void:
 	self.material = material
 	self.adjusted_shader.append(material.adjusted_shader)
 	if material.has_meta("_tile_breaker_cleanup"):

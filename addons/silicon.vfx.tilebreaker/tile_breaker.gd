@@ -164,7 +164,7 @@ const SAMPLER_CODE = {
 			}
 		""",
 		"medium": """
-			vec4 textureNoTile(sampler2D p_sampler, in vec2 p_uv, in float p_rotation, in float p_blending) {
+			vec4 textureNoTile(sampler2D p_sampler, in vec2 p_uv, in float p_rotation, in float p_blending, in bool p_vector_map) {
 				vec2 iuv = floor(p_uv);
 				vec2 fuv = fract(p_uv);
 
@@ -200,7 +200,7 @@ const SAMPLER_CODE = {
 			}
 		""",
 		"high": """
-			vec4 textureNoTile(sampler2D p_sampler, in vec2 p_uv, in float p_rotation, in float p_blending) {
+			vec4 textureNoTile(sampler2D p_sampler, in vec2 p_uv, in float p_rotation, in float p_blending, in bool p_vector_map) {
 				vec2 p = floor(p_uv);
 				vec2 f = fract(p_uv);
 
